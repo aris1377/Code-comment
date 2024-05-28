@@ -44,6 +44,7 @@ app.post("/delete-item", (req, res) => {
   );
 });
 
+// edit-item API bu yordamida biz backend ga yozilgan malumotlarni ozgartirishimiz mumkun
 app.post("/edit-item", (req, res) => {
   const data = req.body;
   db.collection("plans").findOneAndUpdate(
