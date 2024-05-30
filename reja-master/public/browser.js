@@ -58,35 +58,38 @@ document.addEventListener("click", function (e) {
     }
   }
 
-  //edit komandasi logikasi! yani o'zgarish knopkasi bosilganda malumotni ozgartira olishimiz kk
+  //edit komandasi logikasi!
+  //yani o'zgarish knopkasi bosilganda malumotni ozgartira olishimiz kk
   if (e.target.classList.contains("edit-me")) {
     //1.buni biz <promt> bilan qilamiz
-    //2.<promt> bu maxsus browser kamandasi
-    //3."o'zgartirishni kiriting" tekstini malum bir userni inputiga tenglashtiramiz <userInput>
+    //2.<promt> bu maxsus browser kamandasi <prompt(info qismi)> < prompt( "O'zgartirishni kiriting")> info qsimiga kiritamiz
+    //3.va bu "o'zgartirishni kiriting" tekstini <let> bilan malum bir userni inputiga tenglashtiramiz <userInput>
     let userInput = prompt(
       "O'zgartirishni kiriting",
 
       //4. biz ozgartirishni bosganimizda noldan chiqarib beryapti, bizga bunday emas usha bosgan qiymatni xosil qilamiz
       //bunda promtning yana bir xusuiyati bor yani <"O'zgartirishni kiriting"> degan info qismidan keyin qiymat qoshsak boaldi
-      //(ixtiyoriy qiymat qousak ozgartirishni bosgan keyin osha qiymatni olib beradi)
-      //buni orniga niz bosgan qiymatimizni olib berish kk.
 
-      //5. buning uchun biz buni <e.target> imizdan olamiz va reja ejs ichidan <"item-text"> ni ikishimiz kerak
+      //(ixtiyoriy qiymat qoshsak ozgartirishni bosgan keyin osha qiymatni olib beradi)
+      //buni orniga biz bosgan qiymatimizni olib berish kk.
+
+      //5. buning uchun biz buni <e.target> imizdan olamiz va reja ejs ichidan <"item-text"> ni kiritishimiz kerak
       //2 ta parent elemnt chiqib olamiz "item-text" ni qiymatini olamiz
       //querySelector -(DOM) bilan bog'liq bo'lgan narsa va bu HTML elementlarini tanlash va boshqarish imkonini beradi.
       //(".item-text"). <innerHTML> -bu HTML ichidagi textni qoolga olib beradi
-      //bu narsalar bizga HTML ichidagi malumotlarni olin beradi// kirib tekshirsak har birini bosilgan tugmasini olib beryapti
       e.target.parentElement.parentElement.querySelector(".item-text").innerHTML
     );
 
+    //
     // va biz qandaydir <if (userInput)> ozgartirish kiritsak uni qiymati mavjud bolsa bizga  <console.log> qilib chiqarib bersin
     if (userInput) {
       // console.log(userInput) -> qilib tekshirib olamiz
       //console.log(userInput);
       //bu frontenda ozgartirishni kiritsak konsol qilsmida <querty> ni olib beradi
       //bu promt ishlaganimizmi bildiradi
+      //
 
-      //7. Endi bosilgan tugmani ozgartirish logikasini qilamiz
+      //6. Endi bosilgan tugmani ozgartirish logikasini qilamiz
       // bizga endi axios kerak boladi..
       // axios bu serverlar bilan osongina va samarali ravishda aloqada bo'lish imkonini beradi
       axios
@@ -96,17 +99,25 @@ document.addEventListener("click", function (e) {
           //va biz unga post qilmoqchi bolgan narsalarni kiritamiz
           //bosgan tugmamizmi  idisini <id:> orqali post qilamiz < e.target.getAttribute("data-id")> shu orqali
           id: e.target.getAttribute("data-id"), //---> bizga data objekt boladi body qismida kelgan // va id: qismida  rejamizga tegishli bolgan <e.target.getAttribute("data-id")> id bu
+
           //va <new_input> nomli yangi textimiz va uninhg qiymati <userInput> boladi.
           new_input: userInput,
         })
         // then bizga data olib beradi (response - javob);
         // bakenda kelayotgan malumotni responsda qabul qilib olamiz
         .then((response) => {
-          //11. ejs imizni edit qivolishimiz kk
+          //10. ejs imizni edit qivolishimiz kk
+          //bu qismi databasega ozgartitish kiritib success oganimizdan keyin eski nomdagi rejani yangi nomga ozgartitib beradi
           e.target.parentElement.parentElement.querySelector(
             ".item-text"
-            //
+            //  <innerHTML> ni   tenglashtiramiz <userInput> bu frontedda ham ozgartirishizni bildiradi
           ).innerHTML = userInput;
+          // agar <e.target> ni ochrib qoysak ozgartirish kiritganimizdan keyin ozgarmayfi qachonki biz qayta obnavit qilsak ozgaradi
+
+          //c - malumotni kiritish
+          //r - databesda malumot oqishi
+          //u - malumotni yangilash
+          //d - malumotni ozchirish
         })
         .catch((err) => {
           console.log("iltimos qaytadan harakat qiling!", err);
@@ -114,10 +125,19 @@ document.addEventListener("click", function (e) {
     }
   }
 });
+
+//11.
+// document.getElementById("clean-all")
+// bu bizga reja.ejs ichidagi <clean-all> id sini olib beryapti
+// <addEventListener("click", function ()> tugma bosiladiga qisimi vaqtini olib beradi va  <function> ishga tushadi
 document.getElementById("clean-all").addEventListener("click", function () {
+  // <axios> orqali bekenda post bolyapti
   axios
+    // </delete-all> bekenda yangi API yaratamiz shu nom bilan va <axios> orqali zapros yuboramiz
+    //  <delete_all: true> qoshimcha sekur qilish xiosblanadi
     .post("/delete-all", { delete_all: true })
     .then((response) => {
+      //alert - elart ekranga <data> ichidagi <state> dan "hamma malumotlar ochirildi" degan narsani ekranga chiqarib beradi
       alert(response.data.state);
       // Remove all items from the DOM
       document.querySelectorAll(".list-group-item").forEach((item) => {

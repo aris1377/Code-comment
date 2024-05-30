@@ -44,7 +44,7 @@ app.post("/delete-item", (req, res) => {
   );
 });
 
-// 8. API qoshamiz bu ham post boladi va urli <"/edit-item"> boladi
+// 7. API qoshamiz bu ham post boladi va urli <"/edit-item"> boladi
 // va callback (req, res) ochib olamiz
 app.post("/edit-item", (req, res) => {
   // va <const data> qilib olib  <req> ni <body> qismidan olamiz
@@ -53,27 +53,32 @@ app.post("/edit-item", (req, res) => {
   //console.log qilib teksiramuz
   //res.end-  usuli serverga signal berish uchun ishlatiladi,
 
-  //9. endi data besega edit qilib olishimiz kerak
+  //8. endi data besega edit qilib olishimiz kerak
   // < db.collection> bu crud operatsiyalarini boshaqarish uchun kk
   // buning uchun bizga  data baseimizni <findOneAndUpdate> degan komandasi kk boaldi
   db.collection("plans").findOneAndUpdate(
-    //<findOneAndUpdate> ham <_id> ni oladi,  <{ _id: new mongodb.ObjectId(data.id) }> endi <id> <data> ni ichida <data.id>
+    //<findOneAndUpdate> ham <_id> ni oladi,  <{ _id: new mongodb.ObjectId(data.id) }> endi <id> endi bizga <data> ni ichida <data.id>
 
-    //browser.js ichidagi <e.target.getAttribute("data-id") rejamizga tegishli bolgan idini biz mongo object id ga aylantirib olyapmiz <{ _id: new mongodb.ObjectId(data.id) },>
+    //browser.js ichidagi <e.target.getAttribute("data-id") rejamizga tegishli bolgan <id> ini biz mongo object id ga aylantirib olyapmiz <{ _id: new mongodb.ObjectId(data.id) },> orqali
     { _id: new mongodb.ObjectId(data.id) },
 
-    //10. mongodb ni <set> digan komandasi bor va <reja> ni yangi-text bian nomlaymiz. Yangi-textni axios ichidagi datani <new_input> qismiga joylashtirganmiz
+    //9. mongodb ni <set> digan komandasi bor va <reja> ni yangi-text bian nomlaymiz. Yangi-textni axios ichidagi datani <new_input> qismiga joylashtirganmiz
     { $set: { reja: data.new_input } },
 
     //manashu parametrlar muvofaqiyatli ishga tushsa <function> ishga tushsin
     function (err, data) {
+      //tugamani bosib malumotni ozgartirsak databeseni ozgarganaini  <state: "success"> orqali bilishimiz mumkin
       res.json({ state: "success" });
     }
   );
 });
 
+//12.
+// <delete-all> degan api yaratib olamiz va uni <calback> qismi bor <request va response> degan
 app.post("/delete-all", (req, res) => {
+  //<if> bilan shart qoyamiz <request.body> qismining  <delete_all> elementi true bosa
   if (req.body.delete_all) {
+    // mongodb ning <plans> degan collectioni  ga tegishli bolagan hamma malumotlarni ochiramiz
     db.collection("plans").deleteMany(() => {
       res.json({ state: "hammasi delete" });
     });
